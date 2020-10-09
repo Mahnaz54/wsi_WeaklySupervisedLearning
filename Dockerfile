@@ -47,18 +47,18 @@ RUN \
 
 # mount cwd to the project dir in the container
 # allow the ubuntu user to own and thus write to it
-ADD --chown=ubuntu . /home/ubuntu/wsi-WeaklySupervisedLearning
-WORKDIR "/home/ubuntu/wsi-WeaklySupervisedLearning"
+ADD --chown=ubuntu . /home/ubuntu/wsi-weaklysupervisedlearning
+WORKDIR "/home/ubuntu/wsi-weaklysupervisedlearning"
 
 # set up the wsi-learning project
 SHELL ["/bin/bash", "-c"]
 RUN make create_environment
 RUN conda init bash
-RUN echo "source activate wsi-WeaklySupervisedLearning" > ~/.bashrc
+RUN echo "source activate wsi-weaklysupervisedlearning" > ~/.bashrc
 ENV PATH /opt/conda/envs/env/bin:$PATH
 RUN make requirements
 
 # we are going to log in as root and then run the setup script
 USER root
-ENTRYPOINT ["/bin/bash", "./scripts/entrypoint.sh"]
+#ENTRYPOINT ["/bin/bash", "./scripts/entrypoint.sh"]
 

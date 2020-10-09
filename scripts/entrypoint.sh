@@ -20,8 +20,5 @@ new_gid=$(stat -c %g ./notebooks)
 groupmod -g $new_gid ubuntu
 find ./ -group $old_gid -exec chgrp -h $new_gid {} \;
 
-groupadd -g 1005 data-writers
-usermod -a -G data-writers ubuntu
-
 gosu ubuntu bash
 

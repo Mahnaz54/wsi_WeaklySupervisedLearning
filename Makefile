@@ -5,7 +5,7 @@
 #################################################################################
 
 PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-PROJECT_NAME = wsi_WeaklySupervisedLearning 
+PROJECT_NAME = wsi_weaklysupervisedlearning
 PYTHON_INTERPRETER = python
 PYTHON_VERSION = 3.6
 
@@ -16,8 +16,6 @@ else
 HAS_CONDA=True
 endif
 
-# shortcuts
-DATA_SCRIPTS := $(PROJECT_DIR)/data
 
 # network
 DOCKER_JUPYTER_PORT := 8080
@@ -37,9 +35,9 @@ else
 endif
 
 ## install the requirements into the python environment
-requirements: install_curl  install_openslide  install_java
+requirements: install_curl  install_openslide  install_java install_opencv
 	conda env update --file environment.yml
-	pip install -r requirements.txt
+	#pip install -r requirements.txt
 ## save the python environment so it can be recreated
 export_environment:
 	conda env export --no-builds | grep -v "^prefix: " > environment.yml
@@ -49,6 +47,7 @@ export_environment:
 
 # some packages that are required by the project have binary dependencies that
 # have to be installed out with Conda.
+
 
 
 install_openslide:
@@ -70,6 +69,8 @@ install_java:
 	printf '\nexport JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64' >> ~/.bashrc
 	export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 
+install_opencv:
+	pip install opencv-python
 #################################################################################
 # CONTAINER COMMANDS                                                            #
 #################################################################################
@@ -94,16 +95,14 @@ docker_image:
 docker_run_mm_local:
 	docker run --gpus all -p $(DOCKER_JUPYTER_PORT):$(DOCKER_JUPYTER_PORT) \
 				-v $(PROJECT_DIR):/home/ubuntu/$(PROJECT_NAME) \
-				-v /home/mahnaz/datasets/camelyon16/raw/training/tumor:/home/ubuntu/$(PROJECT_NAME)/data \
-				-v /data1/wsi_WeaklySupervisedLearning/results:/home/ubuntu/$(PROJECT_NAME)/results \
-				-v /data1/wsi_WeaklySupervisedLearning/features:/home/ubuntu/$(PROJECT_NAME)/features \
 				-it $(PROJECT_NAME):latest
+
 
 docker_run_tars:
 	docker run --shm-size 8G --gpus all -v $(PROJECT_DIR):/home/ubuntu/$(PROJECT_NAME) \
 				-v /data1/datasets/camelyon16/raw/training/tumor:/home/ubuntu/$(PROJECT_NAME)/data \
-				-v /data1/wsi_WeaklySupervisedLearning/results:/home/ubuntu/$(PROJECT_NAME)/results \
-				-v /data1/wsi_WeaklySupervisedLearning/features:/home/ubuntu/$(PROJECT_NAME)/features \
+				-v /data1/wsi_weaklysupervisedlearning/results:/home/ubuntu/$(PROJECT_NAME)/results \
+				-v /data1/wsi_weaklysupervisedlearning/features:/home/ubuntu/$(PROJECT_NAME)/features \
 				-it $(PROJECT_NAME):latest
 
 docker_remove_all_images:
